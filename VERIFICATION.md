@@ -41,6 +41,8 @@ kernel-bypass options in `Span/` and `Solution.lean`.
 
 - SPRC.
 - Invertibility of \(M\).
+- That \(T^2|\det M|\) is a common denominator, or that scaling
+  produces a grid drawing.
 - That Mazur's constructed span equals the worst-case scheme span
   (the join uses \(c=1\), so the scheme span is an upper bound).
 - Comparator against an adversarial Solution. That is Palomar's job

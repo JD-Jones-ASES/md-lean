@@ -9,8 +9,9 @@ drawing. The proof first builds injective integer heights with greedy
 progress, then solves a Dirichlet problem for the horizontal coordinate.
 The paper does not bound the heights or the bit length of the coordinates.
 
-This note records four consequences of that construction, not of the
-existence theorem.
+This note records four consequences of that construction's recurrences
+and dart weights, not of the existence theorem, and not a construction
+of a drawing or a common denominator.
 
 1. The height span of the inductive recurrences is at most \(2^{n-2}\).
 2. An integer matrix has \(|\det|\) at most the product of its row
@@ -21,13 +22,15 @@ existence theorem.
    and there are at most \(n-1\) other vertices). Interior Dirichlet rows
    then have \(\ell^1\)-norm at most \(2(n-1)^2T\); boundary rows are unit
    rows. Hence \(|\det M|\le(2(n-1)^2T)^n\) for \(n\ge 2\) and \(T\ge 1\).
-4. Clearing a common denominator \(Q=T^2|\det M|\) against (1) and (3)
-   gives \(Q\le 2^{n^2+n-4}(n-1)^{2n}\). Integer coordinates after scaling
-   by \(Q\) lie on a grid of side \(2^{n^2+2n-6}(n-1)^{2n}\).
+4. Combining (1) and (3) bounds two candidate scaling expressions:
+   \(T^2|\det M|\le 2^{n^2+n-4}(n-1)^{2n}\) and
+   \(T^2|\det M|\,T\le 2^{n^2+2n-6}(n-1)^{2n}\). These are size bounds
+   on those expressions. They do not prove that \(T^2|\det M|\) is a
+   common denominator, that \(M\) is invertible, or that any integer
+   drawing lies on a grid of that side.
 
 The factor \(n-1\) is the graph-theoretic count of other vertices, not a
-change of Mazur's recipe. The older \(n^2\) form is a looser corollary.
-Polynomial grid area is not claimed, nor is invertibility of \(M\).
+change of Mazur's recipe. Polynomial grid area is not claimed.
 
 This Mathlib-only file intentionally contains `sorry` placeholders.
 The corresponding declarations are proved in `Solution.lean`, which
@@ -143,7 +146,7 @@ theorem dirichlet_det_le {n T : ℕ}
     (dirichlet Adj h B).det.natAbs ≤ (2 * (n - 1) ^ 2 * T) ^ n := by
   sorry
 
-/-- Clearing \(T^2|\det M|\) against the span bound and the weight bound. -/
+/-- Bound on the candidate scaling \(T^2|\det M|\), not a denominator theorem. -/
 theorem coord_denom {n T : ℕ}
     (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (B : Finset (Fin n))
     (hn : 2 ≤ n) (hTpos : 1 ≤ T) (hT : T ≤ 2 ^ (n - 2))
@@ -152,7 +155,7 @@ theorem coord_denom {n T : ℕ}
       2 ^ (n ^ 2 + n - 4) * (n - 1) ^ (2 * n) := by
   sorry
 
-/-- Integer coordinates after scaling by \(Q\) lie on a grid of this side. -/
+/-- Bound on the candidate scaling \(T^2|\det M|\,T\), not a grid-drawing theorem. -/
 theorem coord_grid {n T : ℕ}
     (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (B : Finset (Fin n))
     (hn : 2 ≤ n) (hTpos : 1 ≤ T) (hT : T ≤ 2 ^ (n - 2))

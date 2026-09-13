@@ -2,24 +2,28 @@
 version: "v0.4"
 
 project:
-  name: "md-lean: height span and Dirichlet denominator bounds for Mazur's greedy construction"
+  name: "md-lean: height span and scaling-expression bounds for Mazur's greedy construction"
   description: >-
-    Quantitative bounds for the integer heights and Dirichlet coordinates in
-    Mazur's 2026 construction of convex greedy drawings, not a proof of the
-    strong Papadimitriou–Ratajczak conjecture. Mazur builds injective integer
-    heights by inductive recurrences on rooted pieces (edge, cycle, binary
-    series, two-range join) and then solves a weighted Dirichlet problem for
-    the horizontal coordinate; the paper does not bound the height span or the
-    bit length of the coordinates. For a well-formed scheme on n >= 2 vertices,
-    the height span satisfies T <= 2^{n-2}. An integer matrix has |det| at most
-    the product of its row ell_1-norms, hence |det| <= R^n when every row
-    ell_1-norm is at most R. Heights in {0,...,T} force Mazur's interior dart
-    weights to be at most (n-1)T, so every Dirichlet row has ell_1-norm at most
-    2(n-1)^2 T when T >= 1, and |det M| <= (2(n-1)^2 T)^n. Clearing the common
-    denominator Q = T^2 |det M| against the span bound then gives
-    Q <= 2^{n^2+n-4} (n-1)^{2n}; after scaling by Q, integer coordinates lie on
-    a grid of side 2^{n^2+2n-6} (n-1)^{2n}. Polynomial grid area is not claimed,
-    nor is invertibility of M.
+    Bounds on the height recurrences and on two candidate scaling expressions
+    in Mazur's 2026 construction of convex greedy drawings, not a proof of the
+    strong Papadimitriou–Ratajczak conjecture and not a grid-drawing theorem.
+    Mazur builds injective integer heights by inductive recurrences on rooted
+    pieces (edge, cycle, binary series, two-range join) and then forms a
+    weighted Dirichlet matrix for the horizontal coordinate; the paper does
+    not bound the height span or the bit length of the coordinates. For a
+    well-formed scheme on n >= 2 vertices, the height span satisfies
+    T <= 2^{n-2}. An integer matrix has |det| at most the product of its row
+    ell_1-norms, hence |det| <= R^n when every row ell_1-norm is at most R.
+    Heights in {0,...,T} force Mazur's interior dart weights to be at most
+    (n-1)T, so every Dirichlet row has ell_1-norm at most 2(n-1)^2 T when
+    T >= 1, and |det M| <= (2(n-1)^2 T)^n. Combining those facts bounds the
+    expressions T^2 |det M| <= 2^{n^2+n-4} (n-1)^{2n} and
+    T^2 |det M| T <= 2^{n^2+2n-6} (n-1)^{2n}. The compared declarations do
+    not prove that T^2 |det M| is a common denominator, that M is invertible,
+    or that any integer drawing lies on a grid of that side. Polynomial-area
+    Euclidean planar greedy drawings of all 3-connected planar graphs remain
+    open (Da Lozzo–D'Angelo–Frati, GD 2020); these expression bounds, if they
+    were grid sizes, would be exponential and would not settle that question.
   authors: ["JD Jones"]
   responsible_maintainers: ["JD Jones"]
   license: "MIT"
@@ -48,7 +52,8 @@ sources:
       length. This development re-implements the height recurrences and the
       dart-weight recipe, proves T <= 2^{n-2} on those recurrences (worst-case
       join attachment c = 1), proves the interior-weight row-sum bound with the
-      in-house (n-1) count, and clears Q = T^2 |det M|. Mazur's existence
+      in-house (n-1) count, and bounds the products T^2 |det M| and
+      T^2 |det M| T. Mazur's existence
       theorem and his accompanying Lean development are not imported and are
       not claimed. ProofAtlas records the existence Lean as pending
       accepted-result publication; that status is theirs, not this extract's.
@@ -62,7 +67,7 @@ sources:
     note: >-
       Author announcement on X (@LechMazur), 2026-09-12. Points to the
       ProofAtlas paper and Lean existence development. Background for
-      provenance of the PDF; not a source of the span or denominator bounds.
+      provenance of the PDF; not a source of the span or scaling bounds.
   - title: "On a conjecture related to geometric routing"
     authors: ["Christos H. Papadimitriou", "David Ratajczak"]
     id: "doi:10.1016/j.tcs.2005.06.022"
@@ -74,6 +79,47 @@ sources:
       Theoretical Computer Science 344 (2005), 3-14. The weak and strong
       greedy-drawing conjectures that Mazur addresses. Background only: this
       repository does not formalize either conjecture.
+  - title: "Some results on greedy embeddings in metric spaces"
+    authors: ["Tom Leighton", "Ankur Moitra"]
+    id: "doi:10.1007/s00454-009-9227-6"
+    type: "paper"
+    location: "https://doi.org/10.1007/s00454-009-9227-6"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: >-
+      Discrete Comput. Geom. 44 (2010), 686-705 (FOCS 2008). Euclidean greedy
+      embeddings exist for 3-connected planar graphs but need not be planar.
+      Cited for the existence/bit-complexity contrast with Mazur's convex
+      construction; not a source of the compared bounds.
+  - title: "On succinct convex greedy drawing of 3-connected plane graphs"
+    authors: ["Xin He", "Huaming Zhang"]
+    id: "doi:10.1137/1.9781611973082.115"
+    type: "paper"
+    location: "https://doi.org/10.1137/1.9781611973082.115"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: >-
+      SODA 2011. Schnyder drawings of triangulations are greedy for a metric
+      equivalent to Euclidean distance and use O(log n)-bit integer
+      coordinates; Euclidean convex greediness together with succinct
+      coordinates fails in general. Background for the bit-complexity
+      comparison; the compared theorems do not produce a Schnyder drawing.
+  - title: "On the area requirements of planar greedy drawings of triconnected planar graphs"
+    authors: ["Giordano Da Lozzo", "Anthony D'Angelo", "Fabrizio Frati"]
+    id: "arXiv:2003.00556"
+    type: "paper"
+    location: "https://arxiv.org/abs/2003.00556"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: >-
+      GD 2020; arXiv:2003.00556. Polynomial-size grids for planar Euclidean
+      greedy drawings of all 3-connected planar graphs are open. Cao,
+      Strelzoff, and Sun's exponential-area claim for a specific family is
+      refuted there: those graphs have convex greedy drawings on an
+      O(n) x O(n) grid; Halin graphs likewise. Some alpha-Schnyder drawings
+      require exponential area. This is the comparison class for Mazur's
+      Euclidean convex construction; the compared theorems bound recurrences
+      and |det M|, not drawing area.
 
 related_formalizations:
   - id: "https://proofatlas.ai/formalizations/strong-papadimitriou-ratajczak-conjecture/"
@@ -91,10 +137,12 @@ status:
     schemes. natAbs_det_le_prod_rowSum and natAbs_det_le_of_rowSum_le are the
     elementary Leibniz ell_1 determinant bounds. dirichlet_rowSum_le and
     dirichlet_det_le are the dart-weight row-sum and determinant bounds.
-    coord_denom and coord_grid clear T^2 |det M| and the scaled grid side
-    against T <= 2^{n-2}. Not claimed: SPRC; polynomial grid area; invertibility
-    of the Dirichlet matrix; that every greedy labeling (as opposed to Mazur's
-    recurrences) obeys the span bound. Challenge.lean's intentional sorry
+    coord_denom and coord_grid bound the products T^2 |det M| and
+    T^2 |det M| T against T <= 2^{n-2}. Not claimed: SPRC; that those
+    products are a common denominator or a grid size; polynomial grid
+    area; invertibility of the Dirichlet matrix; that every greedy
+    labeling (as opposed to Mazur's recurrences) obeys the span bound.
+    Challenge.lean's intentional sorry
     placeholders are excluded from proof counts; Solution.lean does not import
     Challenge.lean.
   sorry_count: 0
@@ -146,9 +194,11 @@ fidelity:
     n-1 is this development. The ell_1 determinant bound is Leibniz/Laplace,
     weaker than Hadamard's Euclidean form and of the same 2^{O(n^2)} order.
     Invertibility of M is Mazur's maximum principle and is not a compared
-    theorem. The common-denominator identity Q = T^2 |det M| is taken from the
-    shape of Mazur's boundary values b_s = h_s(T-h_s)/T^2; the Lean proves the
-    resulting size bound, not that every reduced fraction has that denominator.
+    theorem. The products T^2 |det M| and T^2 |det M| T are motivated by
+    Mazur's boundary values b_s = h_s(T-h_s)/T^2, which would make T^2 a
+    clearing factor for the right-hand side if M were invertible; the Lean
+    proves only the size of those products, not that they are denominators
+    or grid sides.
 
 review:
   status: "self-assessed"
@@ -192,16 +242,20 @@ alignment:
       module: "Solution"
       status: "proved"
       note: "|det M| <= (2(n-1)^2 T)^n."
-    - source: "Clearing Q = T^2 |det M| against the span bound; not in Mazur"
+    - source: "Size of T^2 |det M| against the span bound; not in Mazur"
       lean: "MazurSpan.coord_denom"
       module: "Solution"
       status: "proved"
-      note: "T^2 |det M| <= 2^{n^2+n-4} (n-1)^{2n}."
-    - source: "Scaled grid side QT; not in Mazur"
+      note: >-
+        T^2 |det M| <= 2^{n^2+n-4} (n-1)^{2n}. A bound on that product, not
+        a common-denominator theorem.
+    - source: "Size of T^2 |det M| T against the span bound; not in Mazur"
       lean: "MazurSpan.coord_grid"
       module: "Solution"
       status: "proved"
-      note: "T^2 |det M| T <= 2^{n^2+2n-6} (n-1)^{2n}."
+      note: >-
+        T^2 |det M| T <= 2^{n^2+2n-6} (n-1)^{2n}. A bound on that product,
+        not a grid-drawing theorem.
 
 acknowledgements: >-
   Lech Mazur for the construction; Christos Papadimitriou and David Ratajczak
