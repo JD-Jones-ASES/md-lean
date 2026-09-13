@@ -1,0 +1,207 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "md-lean: height span and Dirichlet denominator bounds for Mazur's greedy construction"
+  description: >-
+    Quantitative bounds for the integer heights and Dirichlet coordinates in
+    Mazur's 2026 construction of convex greedy drawings, not a proof of the
+    strong Papadimitriou–Ratajczak conjecture. Mazur builds injective integer
+    heights by inductive recurrences on rooted pieces (edge, cycle, binary
+    series, two-range join) and then solves a weighted Dirichlet problem for
+    the horizontal coordinate; the paper does not bound the height span or the
+    bit length of the coordinates. For a well-formed scheme on n >= 2 vertices,
+    the height span satisfies T <= 2^{n-2}. An integer matrix has |det| at most
+    the product of its row ell_1-norms, hence |det| <= R^n when every row
+    ell_1-norm is at most R. Heights in {0,...,T} force Mazur's interior dart
+    weights to be at most (n-1)T, so every Dirichlet row has ell_1-norm at most
+    2(n-1)^2 T when T >= 1, and |det M| <= (2(n-1)^2 T)^n. Clearing the common
+    denominator Q = T^2 |det M| against the span bound then gives
+    Q <= 2^{n^2+n-4} (n-1)^{2n}; after scaling by Q, integer coordinates lie on
+    a grid of side 2^{n^2+2n-6} (n-1)^{2n}. Polynomial grid area is not claimed,
+    nor is invertibility of M.
+  authors: ["JD Jones"]
+  responsible_maintainers: ["JD Jones"]
+  license: "MIT"
+
+classification:
+  arxiv: ["math.CO", "math.MG"]
+  msc2020: ["05C10", "05C62"]
+
+sources:
+  - title: "A Proof of the Strong Papadimitriou–Ratajczak Conjecture"
+    authors: ["Lech Mazur"]
+    type: "paper"
+    location: "https://proofatlas.ai/papers/strong-papadimitriou-ratajczak-conjecture/Strong_Papadimitriou_Ratajczak_Conjecture_Proof_2026-09-09.pdf"
+    id: "https://proofatlas.ai/formalizations/strong-papadimitriou-ratajczak-conjecture/"
+    relationship: "adapts"
+    author_endorsement: "not-contacted"
+    note: >-
+      Public version of 2026-09-09, 15 pages, hosted by ProofAtlas with
+      rightsholder authorization. Canonical page:
+      https://proofatlas.ai/formalizations/strong-papadimitriou-ratajczak-conjecture/
+      Announced by the author on X, 2026-09-12,
+      https://x.com/LechMazur/status/2098915169799733339
+      Adapted, not formalized as stated: the paper proves existence of a convex
+      greedy drawing via integer heights (§2) and a Dirichlet horizontal
+      coordinate (§3), and explicitly does not bound heights or coordinate bit
+      length. This development re-implements the height recurrences and the
+      dart-weight recipe, proves T <= 2^{n-2} on those recurrences (worst-case
+      join attachment c = 1), proves the interior-weight row-sum bound with the
+      in-house (n-1) count, and clears Q = T^2 |det M|. Mazur's existence
+      theorem and his accompanying Lean development are not imported and are
+      not claimed. ProofAtlas records the existence Lean as pending
+      accepted-result publication; that status is theirs, not this extract's.
+  - title: "The strong Papadimitriou–Ratajczak conjecture, open since 2004, is now a theorem"
+    authors: ["Lech Mazur"]
+    type: "web discussion"
+    location: "https://x.com/LechMazur/status/2098915169799733339"
+    id: "https://x.com/LechMazur/status/2098915169799733339"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: >-
+      Author announcement on X (@LechMazur), 2026-09-12. Points to the
+      ProofAtlas paper and Lean existence development. Background for
+      provenance of the PDF; not a source of the span or denominator bounds.
+  - title: "On a conjecture related to geometric routing"
+    authors: ["Christos H. Papadimitriou", "David Ratajczak"]
+    id: "doi:10.1016/j.tcs.2005.06.022"
+    type: "paper"
+    location: "https://doi.org/10.1016/j.tcs.2005.06.022"
+    relationship: "background"
+    author_endorsement: "not-contacted"
+    note: >-
+      Theoretical Computer Science 344 (2005), 3-14. The weak and strong
+      greedy-drawing conjectures that Mazur addresses. Background only: this
+      repository does not formalize either conjecture.
+
+related_formalizations:
+  - id: "https://proofatlas.ai/formalizations/strong-papadimitriou-ratajczak-conjecture/"
+    relationship: "other"
+    note: >-
+      Mazur's Lean existence development for SPRC (ProofAtlas page of
+      2026-09-09; announced on X 2026-09-12). Not imported. This repository
+      does not re-prove the existence theorem and does not share any Lean
+      source with that development.
+
+status:
+  scope: >-
+    Seven compared theorems over seven compared definitions, plus the inductive
+    type Scheme. span_le_two_pow is the height-span bound on well-formed Mazur
+    schemes. natAbs_det_le_prod_rowSum and natAbs_det_le_of_rowSum_le are the
+    elementary Leibniz ell_1 determinant bounds. dirichlet_rowSum_le and
+    dirichlet_det_le are the dart-weight row-sum and determinant bounds.
+    coord_denom and coord_grid clear T^2 |det M| and the scaled grid side
+    against T <= 2^{n-2}. Not claimed: SPRC; polynomial grid area; invertibility
+    of the Dirichlet matrix; that every greedy labeling (as opposed to Mazur's
+    recurrences) obeys the span bound. Challenge.lean's intentional sorry
+    placeholders are excluded from proof counts; Solution.lean does not import
+    Challenge.lean.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: ["propext", "Classical.choice", "Quot.sound"]
+  main_results:
+    - declaration: "MazurSpan.span_le_two_pow"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "MazurSpan.dirichlet_det_le"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "MazurSpan.coord_denom"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["Grok 4.6 (xAI)"]
+      framework: "Grok Build"
+      tool_setup: >-
+        Grok 4.6 selected the quantitative question, re-derived the span and
+        weight bounds from Mazur §§2–3, wrote the Python censuses, wrote the
+        Lean 4 proofs, and wrote the documentation. Lean 4.33.0 and Mathlib
+        v4.33.0 (commit db584cd6) are pinned; lake update is not part of the
+        verify path. No solver is in the trust chain. Finite checks are
+        ordinary Python enumeration under a bare python3.
+      prompting_notes: >-
+        The maintainer required a named research audience, forbade claiming
+        SPRC or polynomial area, required the Dirichlet hypothesis to be a
+        theorem rather than an external bound, and required no GitHub Actions.
+  spend_usd: "not tracked"
+  notes: "See DISCLOSURE.md. Prompt, token and monetary accounting was not retained."
+
+fidelity:
+  divergences: >-
+    The compared theorems are consequences of Mazur's recurrences and weight
+    recipe, not a formalization of his existence theorem. Join span uses the
+    worst attachment height c = 1, so the scheme span upper-bounds the
+    constructed span. The (n-1) factor in the row-sum bound is in-house: Mazur
+    writes weights <= n T; dropping the zero self-term and bounding degree by
+    n-1 is this development. The ell_1 determinant bound is Leibniz/Laplace,
+    weaker than Hadamard's Euclidean form and of the same 2^{O(n^2)} order.
+    Invertibility of M is Mazur's maximum principle and is not a compared
+    theorem. The common-denominator identity Q = T^2 |det M| is taken from the
+    shape of Mazur's boundary values b_s = h_s(T-h_s)/T^2; the Lean proves the
+    resulting size bound, not that every reduced fraction has that denominator.
+
+review:
+  status: "self-assessed"
+  notes: >-
+    No independent human expert review and no source-author endorsement is
+    recorded. The statements were checked against Mazur §§2–3 for dropped
+    hypotheses, and the Python censuses recheck the arithmetic and a finite
+    weight census independently of Lean. Mechanical correctness does not
+    establish priority or significance.
+
+alignment:
+  namespace: "MazurSpan"
+  statements:
+    - source: "Mazur, ProofAtlas public version 2026-09-09, §2 recurrences; not stated as a bound in the source"
+      lean: "MazurSpan.span_le_two_pow"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        Well-formed scheme implies span s <= 2^(verts s - 2). Join uses c = 1.
+    - source: "Elementary Leibniz expansion; not in Mazur"
+      lean: "MazurSpan.natAbs_det_le_prod_rowSum"
+      module: "Solution"
+      status: "proved"
+      note: "|det A| <= product of row ell_1-norms for A : Matrix (Fin n) (Fin n) ℤ."
+    - source: "Corollary of the previous"
+      lean: "MazurSpan.natAbs_det_le_of_rowSum_le"
+      module: "Solution"
+      status: "proved"
+      note: "If every row ell_1-norm is <= R then |det A| <= R^n."
+    - source: "Mazur, ProofAtlas public version 2026-09-09, §3 dart weights, with the in-house (n-1) count"
+      lean: "MazurSpan.dirichlet_rowSum_le"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        Heights <= T, n >= 2, T >= 1: every Dirichlet row ell_1-norm is
+        <= 2(n-1)^2 T. Boundary rows equal 1.
+    - source: "Mazur §3 weights plus Leibniz, not stated in the source"
+      lean: "MazurSpan.dirichlet_det_le"
+      module: "Solution"
+      status: "proved"
+      note: "|det M| <= (2(n-1)^2 T)^n."
+    - source: "Clearing Q = T^2 |det M| against the span bound; not in Mazur"
+      lean: "MazurSpan.coord_denom"
+      module: "Solution"
+      status: "proved"
+      note: "T^2 |det M| <= 2^{n^2+n-4} (n-1)^{2n}."
+    - source: "Scaled grid side QT; not in Mazur"
+      lean: "MazurSpan.coord_grid"
+      module: "Solution"
+      status: "proved"
+      note: "T^2 |det M| T <= 2^{n^2+2n-6} (n-1)^{2n}."
+
+acknowledgements: >-
+  Lech Mazur for the construction; Christos Papadimitriou and David Ratajczak
+  for the conjecture; Lean, Mathlib, Comparator, lean4export, NanoDa, and the
+  Palomar policy. AI assistance is disclosed above and in DISCLOSURE.md.

@@ -1,0 +1,24 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "MazurSpan.span_le_two_pow",
+    "MazurSpan.natAbs_det_le_prod_rowSum",
+    "MazurSpan.natAbs_det_le_of_rowSum_le",
+    "MazurSpan.dirichlet_rowSum_le",
+    "MazurSpan.dirichlet_det_le",
+    "MazurSpan.coord_denom",
+    "MazurSpan.coord_grid"
+  ],
+  "definition_names": [
+    "MazurSpan.verts",
+    "MazurSpan.span",
+    "MazurSpan.WellFormed",
+    "MazurSpan.upwardSum",
+    "MazurSpan.downwardSum",
+    "MazurSpan.dartWeight",
+    "MazurSpan.dirichlet"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": true
+}
