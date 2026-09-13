@@ -14,6 +14,7 @@ CHECKS = [
     "census_span.py",
     "census_bits.py",
     "census_weights.py",
+    "census_exact.py",
     "check_source.py",
 ]
 

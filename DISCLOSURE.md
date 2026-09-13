@@ -9,9 +9,11 @@ Strong Papadimitriou–Ratajczak Conjecture*, public version 2026-09-09,
 [ProofAtlas](https://proofatlas.ai/formalizations/strong-papadimitriou-ratajczak-conjecture/)
 and announced by the author on
 [X, 2026-09-12](https://x.com/LechMazur/status/2098915169799733339).
-The span bound, the \(n-1\) row-sum tightening, and the explicit
-exponentials for \(T^2|\det M|\) and \(T^2|\det M|\,T\) are not stated
-in that paper. The Lean does not import Mazur's existence development.
+The exact scheme-span maximum \(F(n)\), the local dart-mass bound,
+the adjugate identity, the \(n-1\) row-sum tightening, and the
+explicit exponentials for \(T^2|\det M|\) and \(T^2|\det M|\,T\) are
+not stated in that paper. The Lean does not import Mazur's existence
+development.
 
 ## What the AI did
 

@@ -34,6 +34,16 @@ def WellFormed : Scheme → Prop
       (span K = 1 → verts K = 2) ∧
       (1 < span K → 3 ≤ verts H ∧ 3 ≤ verts K)
 
+def joinCount : Scheme → ℕ
+  | .edge => 0
+  | .cycle _ => 0
+  | .series A B => joinCount A + joinCount B
+  | .join H K =>
+      joinCount H + joinCount K + if 1 < span K then 1 else 0
+
+def exactCap (n : ℕ) : ℕ :=
+  if n % 2 = 0 then 2 ^ (n / 2) - 1 else 3 * 2 ^ ((n - 3) / 2) - 1
+
 /-- Transfer: the two `Scheme` types are identical inductive trees. -/
 def toSpan : Scheme → Span.Scheme
   | edge => .edge
@@ -69,10 +79,67 @@ lemma wf_toSpan : ∀ s, WellFormed s → Span.WellFormed (toSpan s)
         have hHK := h.2.2.2 hsK
         simpa [verts_toSpan H, verts_toSpan K] using hHK
 
+def fromSpan : Span.Scheme → Scheme
+  | .edge => .edge
+  | .cycle k => .cycle k
+  | .series A B => .series (fromSpan A) (fromSpan B)
+  | .join H K => .join (fromSpan H) (fromSpan K)
+
+lemma verts_fromSpan : ∀ s, verts (fromSpan s) = Span.verts s
+  | .edge => rfl
+  | .cycle k => rfl
+  | .series A B => by simp [verts, Span.verts, fromSpan, verts_fromSpan A, verts_fromSpan B]
+  | .join H K => by simp [verts, Span.verts, fromSpan, verts_fromSpan H, verts_fromSpan K]
+
+lemma span_fromSpan : ∀ s, span (fromSpan s) = Span.span s
+  | .edge => rfl
+  | .cycle k => rfl
+  | .series A B => by simp [span, Span.span, fromSpan, span_fromSpan A, span_fromSpan B]
+  | .join H K => by
+      simp [span, Span.span, fromSpan, span_fromSpan H, span_fromSpan K]
+
+lemma wf_fromSpan : ∀ s, Span.WellFormed s → WellFormed (fromSpan s)
+  | .edge, _ => trivial
+  | .cycle _, _ => trivial
+  | .series A B, h => ⟨wf_fromSpan A h.1, wf_fromSpan B h.2⟩
+  | .join H K, h => by
+      refine ⟨wf_fromSpan H h.1, wf_fromSpan K h.2.1, ?_, ?_⟩
+      · intro hs
+        have hsK : Span.span K = 1 := by simpa [span_fromSpan K] using hs
+        have h2 : Span.verts K = 2 := h.2.2.1 hsK
+        simpa [verts_fromSpan K] using h2
+      · intro hs
+        have hsK : 1 < Span.span K := by simpa [span_fromSpan K] using hs
+        have hHK := h.2.2.2 hsK
+        simpa [verts_fromSpan H, verts_fromSpan K] using hHK
+
+lemma joinCount_toSpan : ∀ s, joinCount s = Span.joinCount (toSpan s)
+  | .edge => rfl
+  | .cycle k => rfl
+  | .series A B => by
+      simp [joinCount, Span.joinCount, toSpan, joinCount_toSpan A, joinCount_toSpan B]
+  | .join H K => by
+      simp [joinCount, Span.joinCount, toSpan, joinCount_toSpan H, joinCount_toSpan K,
+        span_toSpan K]
+
+lemma exactCap_eq (n : ℕ) : exactCap n = Span.exactCap n := rfl
+
 theorem span_le_two_pow (s : Scheme) (h : WellFormed s) :
     span s ≤ 2 ^ (verts s - 2) := by
   have := Span.span_le_two_pow (toSpan s) (wf_toSpan s h)
   simpa [span_toSpan, verts_toSpan] using this
+
+theorem span_le_exact (s : Scheme) (h : WellFormed s) :
+    span s ≤ exactCap (verts s) := by
+  have := Span.span_le_exact (toSpan s) (wf_toSpan s h)
+  simpa [span_toSpan, verts_toSpan, exactCap_eq] using this
+
+theorem exists_span_eq_exact (n : ℕ) (hn : 2 ≤ n) :
+    ∃ s : Scheme, WellFormed s ∧ verts s = n ∧ span s = exactCap n := by
+  obtain ⟨s, hwf, hv, hs⟩ := Span.exists_span_eq_exact n hn
+  refine ⟨fromSpan s, wf_fromSpan s hwf, ?_, ?_⟩
+  · simpa [verts_fromSpan] using hv
+  · simpa [span_fromSpan, exactCap_eq] using hs
 
 /-- The `(i, j)`-entry of an integer matrix. Named so compared
     statements do not apply a `Matrix` as a function; Palomar's
@@ -158,5 +225,53 @@ theorem coord_grid {n T : ℕ}
     T ^ 2 * (dirichlet Adj h B).det.natAbs * T ≤
       2 ^ (n ^ 2 + 2 * n - 6) * (n - 1) ^ (2 * n) := by
   simpa [dirichlet_eq] using Span.coord_grid Adj h B hn hTpos hT hh
+
+def higherCount (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) : ℕ :=
+  ∑ t : Fin n, if Adj s t then (if h s < h t then 1 else 0) else 0
+
+def lowerCount (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) : ℕ :=
+  ∑ t : Fin n, if Adj s t then (if h t < h s then 1 else 0) else 0
+
+def dartMass (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) : ℕ :=
+  higherCount Adj h s * downwardSum Adj h s +
+    lowerCount Adj h s * upwardSum Adj h s
+
+lemma higherCount_eq (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) :
+    higherCount Adj h s = Span.higherCount Adj h s := rfl
+
+lemma lowerCount_eq (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) :
+    lowerCount Adj h s = Span.lowerCount Adj h s := rfl
+
+lemma dartMass_eq (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) :
+    dartMass Adj h s = Span.dartMass Adj h s := by
+  simp [dartMass, Span.dartMass, higherCount_eq, lowerCount_eq,
+    upwardSum_eq, downwardSum_eq]
+
+theorem dartMass_le {n T : ℕ} (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
+    (hh : ∀ i, h i ≤ T) (s : Fin n) :
+    dartMass Adj h s ≤ higherCount Adj h s * lowerCount Adj h s * T := by
+  simpa [dartMass_eq, higherCount_eq, lowerCount_eq] using
+    Span.dartMass_le Adj h hh s
+
+def boundaryTarget (h : Fin n → ℕ) (T : ℕ) (B : Finset (Fin n)) : Fin n → ℤ :=
+  fun s => if s ∈ B then (h s * (T - h s) : ℤ) else 0
+
+lemma boundaryTarget_eq (h : Fin n → ℕ) (T : ℕ) (B : Finset (Fin n)) :
+    boundaryTarget h T B = Span.boundaryTarget h T B := rfl
+
+theorem dirichlet_adjugate_clears {n : ℕ}
+    (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
+    (B : Finset (Fin n)) (T : ℕ) :
+    let M := dirichlet Adj h B
+    let u := boundaryTarget h T B
+    let z := M.adjugate.mulVec u
+    M.mulVec z = M.det • u ∧
+      ∀ s ∈ B, z s = M.det * (h s * (T - h s) : ℤ) := by
+  intro M u z
+  have hM : M = Span.dirichlet Adj h B := dirichlet_eq Adj h B
+  have hu : u = Span.boundaryTarget h T B := boundaryTarget_eq h T B
+  have := Span.dirichlet_adjugate_clears Adj h B T
+  -- Unfold the let's in the Span theorem.
+  simpa [M, u, z, hM, hu, dirichlet_eq] using this
 
 end MazurSpan

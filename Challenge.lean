@@ -9,11 +9,14 @@ drawing. The proof first builds injective integer heights with greedy
 progress, then solves a Dirichlet problem for the horizontal coordinate.
 The paper does not bound the heights or the bit length of the coordinates.
 
-This note records four consequences of that construction's recurrences
+This note records consequences of that construction's recurrences
 and dart weights, not of the existence theorem, and not a construction
-of a drawing or a common denominator.
+of a drawing.
 
-1. The height span of the inductive recurrences is at most \(2^{n-2}\).
+1. The height span of a well-formed scheme on \(n\) vertices is at most
+   the exact one-parameter maximum \(F(n)=2^{n/2}-1\) (\(n\) even) or
+   \(3\cdot 2^{(n-3)/2}-1\) (\(n\) odd). Every such \(F(n)\) is attained.
+   The coarser bound \(T\le 2^{n-2}\) remains as a corollary.
 2. An integer matrix has \(|\det|\) at most the product of its row
    \(\ell^1\)-norms (Leibniz expansion). If every row \(\ell^1\)-norm is
    at most \(R\), then \(|\det|\le R^n\).
@@ -22,12 +25,16 @@ of a drawing or a common denominator.
    and there are at most \(n-1\) other vertices). Interior Dirichlet rows
    then have \(\ell^1\)-norm at most \(2(n-1)^2T\); boundary rows are unit
    rows. Hence \(|\det M|\le(2(n-1)^2T)^n\) for \(n\ge 2\) and \(T\ge 1\).
-4. Combining (1) and (3) bounds two candidate scaling expressions:
-   \(T^2|\det M|\le 2^{n^2+n-4}(n-1)^{2n}\) and
+   Locally, the outgoing mass at a vertex is at most \(a_s b_s T\).
+4. Combining the coarser span bound and (3) bounds two candidate scaling
+   expressions: \(T^2|\det M|\le 2^{n^2+n-4}(n-1)^{2n}\) and
    \(T^2|\det M|\,T\le 2^{n^2+2n-6}(n-1)^{2n}\). These are size bounds
-   on those expressions. They do not prove that \(T^2|\det M|\) is a
-   common denominator, that \(M\) is invertible, or that any integer
-   drawing lies on a grid of that side.
+   on those expressions.
+5. Independently of invertibility, the adjugate identity produces an
+   integer vector \(z=\operatorname{adj}(M)u\) with \(Mz=\Delta u\) and
+   \(z_s=\Delta h_s(T-h_s)\) on the boundary. If \(\Delta\neq 0\), this
+   is an integer clearing of Mazur's quadratic boundary values; the
+   compared statement does not prove \(\Delta\neq 0\).
 
 The factor \(n-1\) is the graph-theoretic count of other vertices, not a
 change of Mazur's recipe. Polynomial grid area is not claimed.
@@ -78,10 +85,32 @@ def WellFormed : Scheme → Prop
       (span K = 1 → verts K = 2) ∧
       (1 < span K → 3 ≤ verts H ∧ 3 ≤ verts K)
 
+/-- Number of nontrivial joins: a join whose upper child has span > 1. -/
+def joinCount : Scheme → ℕ
+  | .edge => 0
+  | .cycle _ => 0
+  | .series A B => joinCount A + joinCount B
+  | .join H K =>
+      joinCount H + joinCount K + if 1 < span K then 1 else 0
+
+/-- Exact one-parameter maximum of the scheme grammar. -/
+def exactCap (n : ℕ) : ℕ :=
+  if n % 2 = 0 then 2 ^ (n / 2) - 1 else 3 * 2 ^ ((n - 3) / 2) - 1
+
 /-- The height span of a well-formed Mazur scheme on n vertices is at
-    most 2^{n-2}. -/
+    most 2^{n-2}. A coarser corollary of `span_le_exact`. -/
 theorem span_le_two_pow (s : Scheme) (h : WellFormed s) :
     span s ≤ 2 ^ (verts s - 2) := by
+  sorry
+
+/-- Exact one-parameter maximum: \(T\le F(n)\). -/
+theorem span_le_exact (s : Scheme) (h : WellFormed s) :
+    span s ≤ exactCap (verts s) := by
+  sorry
+
+/-- Every value \(F(n)\) is attained by some well-formed scheme. -/
+theorem exists_span_eq_exact (n : ℕ) (hn : 2 ≤ n) :
+    ∃ s : Scheme, WellFormed s ∧ verts s = n ∧ span s = exactCap n := by
   sorry
 
 /-- The `(i, j)`-entry of an integer matrix. Named so compared
@@ -162,6 +191,41 @@ theorem coord_grid {n T : ℕ}
     (hh : ∀ i, h i ≤ T) :
     T ^ 2 * (dirichlet Adj h B).det.natAbs * T ≤
       2 ^ (n ^ 2 + 2 * n - 6) * (n - 1) ^ (2 * n) := by
+  sorry
+
+/-- Neighbours of `s` with strictly larger height. -/
+def higherCount (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) : ℕ :=
+  ∑ t : Fin n, if Adj s t then (if h s < h t then 1 else 0) else 0
+
+/-- Neighbours of `s` with strictly smaller height. -/
+def lowerCount (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) : ℕ :=
+  ∑ t : Fin n, if Adj s t then (if h t < h s then 1 else 0) else 0
+
+/-- Outgoing dart mass \(\delta_s=a_s N_s+b_s P_s\). -/
+def dartMass (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) : ℕ :=
+  higherCount Adj h s * downwardSum Adj h s +
+    lowerCount Adj h s * upwardSum Adj h s
+
+/-- Local mass bound: \(\delta_s\le a_s b_s T\). -/
+theorem dartMass_le {n T : ℕ} (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
+    (hh : ∀ i, h i ≤ T) (s : Fin n) :
+    dartMass Adj h s ≤ higherCount Adj h s * lowerCount Adj h s * T := by
+  sorry
+
+/-- Quadratic boundary values, unscaled by \(T^2\). -/
+def boundaryTarget (h : Fin n → ℕ) (T : ℕ) (B : Finset (Fin n)) : Fin n → ℤ :=
+  fun s => if s ∈ B then (h s * (T - h s) : ℤ) else 0
+
+/-- Adjugate identity: \(Mz=\Delta u\) and \(z_s=\Delta h_s(T-h_s)\) on
+    the boundary. Does not prove invertibility. -/
+theorem dirichlet_adjugate_clears {n : ℕ}
+    (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
+    (B : Finset (Fin n)) (T : ℕ) :
+    let M := dirichlet Adj h B
+    let u := boundaryTarget h T B
+    let z := M.adjugate.mulVec u
+    M.mulVec z = M.det • u ∧
+      ∀ s ∈ B, z s = M.det * (h s * (T - h s) : ℤ) := by
   sorry
 
 end MazurSpan

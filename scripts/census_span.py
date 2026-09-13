@@ -196,6 +196,26 @@ def bound(s):
     return pow2(n - 2)
 
 
+def exact_cap(n):
+    if n < 2:
+        raise ValueError("exact cap is defined for n >= 2")
+    if n % 2 == 0:
+        return pow2(n // 2) - 1
+    return 3 * pow2((n - 3) // 2) - 1
+
+
+def join_count(s):
+    tag = s[0]
+    if tag in ("edge", "cycle"):
+        return 0
+    if tag == "series":
+        return join_count(s[1]) + join_count(s[2])
+    if tag == "join":
+        extra = 1 if span(s[2]) > 1 else 0
+        return join_count(s[1]) + join_count(s[2]) + extra
+    raise ValueError(tag)
+
+
 # ---------------------------------------------------------------------------
 
 def main():
@@ -283,13 +303,34 @@ def main():
           (n_sch, max_n, max_T, n_eq))
     check("census is not vacuous", n_sch >= 100, "count=%d" % n_sch)
 
+    n_exact_fail = 0
+    n_budget_fail = 0
+    n_exact_eq = 0
+    for s in schemes:
+        n = verts(s)
+        T = span(s)
+        j = join_count(s)
+        F = exact_cap(n)
+        if T > F:
+            n_exact_fail += 1
+        if T == F:
+            n_exact_eq += 1
+        if T + 1 > pow2(j) * (n - 2 * j):
+            n_budget_fail += 1
+    check("every generated scheme has T <= F(n)",
+          n_exact_fail == 0, "tight_exact=%d" % n_exact_eq)
+    check("every generated scheme has T+1 <= 2^j (n-2j)",
+          n_budget_fail == 0)
+
     head("[E]  join of two 3-cycles")
     j = ("join", c3, c3)
     check("join(C3,C3) well-formed", well_formed(j))
     # C3: n=3 T=2, W=1, A=2, T=2+1+max(1,1)+1=5, n=5, bound=8
-    check("join(C3,C3): n=5 T=5 bound=8",
-          verts(j) == 5 and span(j) == 5 and bound(j) == 8,
-          "n=%d T=%d B=%d" % (verts(j), span(j), bound(j)))
+    check("join(C3,C3): n=5 T=5 bound=8 exact=5",
+          verts(j) == 5 and span(j) == 5 and bound(j) == 8
+          and exact_cap(5) == 5,
+          "n=%d T=%d B=%d F=%d" %
+          (verts(j), span(j), bound(j), exact_cap(5)))
 
     head("[F]  engines agree on 2^k")
     k = 0

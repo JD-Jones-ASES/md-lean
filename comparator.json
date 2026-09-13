@@ -3,22 +3,32 @@
   "solution_module": "Solution",
   "theorem_names": [
     "MazurSpan.span_le_two_pow",
+    "MazurSpan.span_le_exact",
+    "MazurSpan.exists_span_eq_exact",
     "MazurSpan.natAbs_det_le_prod_rowSum",
     "MazurSpan.natAbs_det_le_of_rowSum_le",
     "MazurSpan.dirichlet_rowSum_le",
     "MazurSpan.dirichlet_det_le",
     "MazurSpan.coord_denom",
-    "MazurSpan.coord_grid"
+    "MazurSpan.coord_grid",
+    "MazurSpan.dartMass_le",
+    "MazurSpan.dirichlet_adjugate_clears"
   ],
   "definition_names": [
     "MazurSpan.verts",
     "MazurSpan.span",
     "MazurSpan.WellFormed",
+    "MazurSpan.joinCount",
+    "MazurSpan.exactCap",
     "MazurSpan.entry",
     "MazurSpan.upwardSum",
     "MazurSpan.downwardSum",
     "MazurSpan.dartWeight",
-    "MazurSpan.dirichlet"
+    "MazurSpan.dirichlet",
+    "MazurSpan.higherCount",
+    "MazurSpan.lowerCount",
+    "MazurSpan.dartMass",
+    "MazurSpan.boundaryTarget"
   ],
   "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
   "enable_nanoda": true

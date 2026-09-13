@@ -2,28 +2,29 @@
 version: "v0.4"
 
 project:
-  name: "md-lean: height span and scaling-expression bounds for Mazur's greedy construction"
+  name: "md-lean: exact height span, dart mass, and adjugate scaling for Mazur's greedy construction"
   description: >-
-    Bounds on the height recurrences and on two candidate scaling expressions
-    in Mazur's 2026 construction of convex greedy drawings, not a proof of the
-    strong Papadimitriou–Ratajczak conjecture and not a grid-drawing theorem.
-    Mazur builds injective integer heights by inductive recurrences on rooted
+    Exact height-span of Mazur's scheme grammar, a local dart-mass bound, and
+    an adjugate identity for the Dirichlet matrix of that construction; not a
+    proof of the strong Papadimitriou–Ratajczak conjecture and not a theorem
+    that every 3-connected plane graph attains the scheme maximum. Mazur
+    builds injective integer heights by inductive recurrences on rooted
     pieces (edge, cycle, binary series, two-range join) and then forms a
     weighted Dirichlet matrix for the horizontal coordinate; the paper does
     not bound the height span or the bit length of the coordinates. For a
-    well-formed scheme on n >= 2 vertices, the height span satisfies
-    T <= 2^{n-2}. An integer matrix has |det| at most the product of its row
-    ell_1-norms, hence |det| <= R^n when every row ell_1-norm is at most R.
+    well-formed scheme on n >= 2 vertices with j nontrivial joins,
+    T+1 <= 2^j (n-2j), attained at every admissible pair, so the
+    one-parameter maximum is F(n) = 2^{n/2}-1 (n even) or
+    3 * 2^{(n-3)/2}-1 (n odd). The coarser bound T <= 2^{n-2} remains. An
+    integer matrix has |det| at most the product of its row ell_1-norms.
     Heights in {0,...,T} force Mazur's interior dart weights to be at most
     (n-1)T, so every Dirichlet row has ell_1-norm at most 2(n-1)^2 T when
-    T >= 1, and |det M| <= (2(n-1)^2 T)^n. Combining those facts bounds the
-    expressions T^2 |det M| <= 2^{n^2+n-4} (n-1)^{2n} and
-    T^2 |det M| T <= 2^{n^2+2n-6} (n-1)^{2n}. The compared declarations do
-    not prove that T^2 |det M| is a common denominator, that M is invertible,
-    or that any integer drawing lies on a grid of that side. Polynomial-area
-    Euclidean planar greedy drawings of all 3-connected planar graphs remain
-    open (Da Lozzo–D'Angelo–Frati, GD 2020); these expression bounds, if they
-    were grid sizes, would be exponential and would not settle that question.
+    T >= 1, and |det M| <= (2(n-1)^2 T)^n; locally the outgoing mass is at
+    most a_s b_s T. Combining the coarser span bound with the row-sum bound
+    sizes T^2 |det M| and T^2 |det M| T. Independently of invertibility,
+    z = adj(M) u satisfies Mz = Delta u and z_s = Delta h_s (T-h_s) on the
+    boundary. Polynomial-area Euclidean planar greedy drawings of all
+    3-connected planar graphs remain open (Da Lozzo–D'Angelo–Frati, GD 2020).
   authors: ["JD Jones"]
   responsible_maintainers: ["JD Jones"]
   license: "MIT"
@@ -50,10 +51,11 @@ sources:
       greedy drawing via integer heights (§2) and a Dirichlet horizontal
       coordinate (§3), and explicitly does not bound heights or coordinate bit
       length. This development re-implements the height recurrences and the
-      dart-weight recipe, proves T <= 2^{n-2} on those recurrences (worst-case
+      dart-weight recipe, proves the exact scheme maximum F(n) (worst-case
       join attachment c = 1), proves the interior-weight row-sum bound with the
-      in-house (n-1) count, and bounds the products T^2 |det M| and
-      T^2 |det M| T. Mazur's existence
+      in-house (n-1) count, proves the local dart-mass bound, proves the
+      adjugate identity Mz = Delta u, and bounds the products T^2 |det M| and
+      T^2 |det M| T against the coarser span T <= 2^{n-2}. Mazur's existence
       theorem and his accompanying Lean development are not imported and are
       not claimed. ProofAtlas records the existence Lean as pending
       accepted-result publication; that status is theirs, not this extract's.
@@ -132,23 +134,35 @@ related_formalizations:
 
 status:
   scope: >-
-    Seven compared theorems over seven compared definitions, plus the inductive
-    type Scheme. span_le_two_pow is the height-span bound on well-formed Mazur
-    schemes. natAbs_det_le_prod_rowSum and natAbs_det_le_of_rowSum_le are the
-    elementary Leibniz ell_1 determinant bounds. dirichlet_rowSum_le and
-    dirichlet_det_le are the dart-weight row-sum and determinant bounds.
-    coord_denom and coord_grid bound the products T^2 |det M| and
-    T^2 |det M| T against T <= 2^{n-2}. Not claimed: SPRC; that those
-    products are a common denominator or a grid size; polynomial grid
-    area; invertibility of the Dirichlet matrix; that every greedy
-    labeling (as opposed to Mazur's recurrences) obeys the span bound.
-    Challenge.lean's intentional sorry
-    placeholders are excluded from proof counts; Solution.lean does not import
+    Eleven compared theorems over the compared definitions, plus the inductive
+    type Scheme. span_le_exact and exists_span_eq_exact are the exact
+    one-parameter scheme maximum F(n). span_le_two_pow is the coarser
+    height-span bound. natAbs_det_le_prod_rowSum and natAbs_det_le_of_rowSum_le
+    are the elementary Leibniz ell_1 determinant bounds. dirichlet_rowSum_le
+    and dirichlet_det_le are the dart-weight row-sum and determinant bounds.
+    dartMass_le is the local a_s b_s T mass bound. coord_denom and coord_grid
+    bound the products T^2 |det M| and T^2 |det M| T against T <= 2^{n-2}.
+    dirichlet_adjugate_clears is the adjugate identity Mz = Delta u with
+    integer boundary values Delta h (T-h); it does not prove invertibility.
+    Not claimed: SPRC; polynomial grid area; that every greedy labeling (as
+    opposed to Mazur's recurrences) obeys the span bound; a planar
+    degree-budget theorem. Challenge.lean's intentional sorry placeholders
+    are excluded from proof counts; Solution.lean does not import
     Challenge.lean.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms: ["propext", "Classical.choice", "Quot.sound"]
   main_results:
+    - declaration: "MazurSpan.span_le_exact"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "MazurSpan.exists_span_eq_exact"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
     - declaration: "MazurSpan.span_le_two_pow"
       file: "Solution.lean"
       sorry_count: 0
@@ -159,7 +173,17 @@ status:
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator.json"
+    - declaration: "MazurSpan.dartMass_le"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
     - declaration: "MazurSpan.coord_denom"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "MazurSpan.dirichlet_adjugate_clears"
       file: "Solution.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -194,11 +218,11 @@ fidelity:
     n-1 is this development. The ell_1 determinant bound is Leibniz/Laplace,
     weaker than Hadamard's Euclidean form and of the same 2^{O(n^2)} order.
     Invertibility of M is Mazur's maximum principle and is not a compared
-    theorem. The products T^2 |det M| and T^2 |det M| T are motivated by
-    Mazur's boundary values b_s = h_s(T-h_s)/T^2, which would make T^2 a
-    clearing factor for the right-hand side if M were invertible; the Lean
-    proves only the size of those products, not that they are denominators
-    or grid sides.
+    theorem. The adjugate identity produces integer z with Mz = Delta u
+    regardless; uniqueness requires Delta != 0, which is not proved. The
+    products T^2 |det M| and T^2 |det M| T are motivated by Mazur's
+    boundary values b_s = h_s(T-h_s)/T^2; the Lean sizes those products
+    against T <= 2^{n-2} and separately exhibits the adjugate vector.
 
 review:
   status: "self-assessed"
@@ -212,12 +236,25 @@ review:
 alignment:
   namespace: "MazurSpan"
   statements:
-    - source: "Mazur, ProofAtlas public version 2026-09-09, §2 recurrences; not stated as a bound in the source"
+    - source: "Mazur, ProofAtlas public version 2026-09-09, §2 recurrences; exact maximum not stated in the source"
+      lean: "MazurSpan.span_le_exact"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        Well-formed scheme implies span s <= F(verts s), with F even/odd as
+        above. Join uses c = 1. Attained by exists_span_eq_exact.
+    - source: "Construction of extremal schemes from a cycle and triangle joins; not in Mazur"
+      lean: "MazurSpan.exists_span_eq_exact"
+      module: "Solution"
+      status: "proved"
+      note: "Some well-formed scheme on n vertices has span exactly F(n)."
+    - source: "Mazur, ProofAtlas public version 2026-09-09, §2 recurrences; coarser bound not stated in the source"
       lean: "MazurSpan.span_le_two_pow"
       module: "Solution"
       status: "proved"
       note: >-
         Well-formed scheme implies span s <= 2^(verts s - 2). Join uses c = 1.
+        Coarser than span_le_exact.
     - source: "Elementary Leibniz expansion; not in Mazur"
       lean: "MazurSpan.natAbs_det_le_prod_rowSum"
       module: "Solution"
@@ -256,6 +293,18 @@ alignment:
       note: >-
         T^2 |det M| T <= 2^{n^2+2n-6} (n-1)^{2n}. A bound on that product,
         not a grid-drawing theorem.
+    - source: "Local dart-mass identity; not stated in Mazur"
+      lean: "MazurSpan.dartMass_le"
+      module: "Solution"
+      status: "proved"
+      note: "Outgoing mass delta_s <= a_s b_s T."
+    - source: "Adjugate identity applied to Mazur's Dirichlet matrix; not stated in Mazur"
+      lean: "MazurSpan.dirichlet_adjugate_clears"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        M (adj M u) = Delta u, and on the boundary z_s = Delta h_s (T-h_s).
+        Does not prove Delta != 0.
 
 acknowledgements: >-
   Lech Mazur for the construction; Christos Papadimitriou and David Ratajczak
