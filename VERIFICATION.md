@@ -12,7 +12,7 @@ lake exe cache get
 lake build Span Challenge Solution
 ```
 
-Expected: eleven `declaration uses sorry` warnings from
+Expected: fifteen `declaration uses sorry` warnings from
 `Challenge.lean`. `Solution.lean` and `Span/` must be sorry-free.
 Axioms used by the compared theorems are `propext`, `Classical.choice`,
 `Quot.sound`.

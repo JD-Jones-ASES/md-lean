@@ -122,6 +122,15 @@ lemma joinCount_toSpan : ∀ s, joinCount s = Span.joinCount (toSpan s)
       simp [joinCount, Span.joinCount, toSpan, joinCount_toSpan H, joinCount_toSpan K,
         span_toSpan K]
 
+lemma joinCount_fromSpan : ∀ s, joinCount (fromSpan s) = Span.joinCount s
+  | .edge => rfl
+  | .cycle k => rfl
+  | .series A B => by
+      simp [joinCount, Span.joinCount, fromSpan, joinCount_fromSpan A, joinCount_fromSpan B]
+  | .join H K => by
+      simp [joinCount, Span.joinCount, fromSpan, joinCount_fromSpan H, joinCount_fromSpan K,
+        span_fromSpan K]
+
 lemma exactCap_eq (n : ℕ) : exactCap n = Span.exactCap n := rfl
 
 theorem span_le_two_pow (s : Scheme) (h : WellFormed s) :
@@ -140,6 +149,21 @@ theorem exists_span_eq_exact (n : ℕ) (hn : 2 ≤ n) :
   refine ⟨fromSpan s, wf_fromSpan s hwf, ?_, ?_⟩
   · simpa [verts_fromSpan] using hv
   · simpa [span_fromSpan, exactCap_eq] using hs
+
+theorem span_succ_le_join_budget (s : Scheme) (h : WellFormed s) :
+    span s + 1 ≤ 2 ^ joinCount s * (verts s - 2 * joinCount s) := by
+  have := Span.span_succ_le_join_budget (toSpan s) (wf_toSpan s h)
+  simpa [span_toSpan, verts_toSpan, joinCount_toSpan] using this
+
+theorem exists_span_eq_join_budget (n j : ℕ)
+    (h : n = 2 ∧ j = 0 ∨ 2 * j + 3 ≤ n) :
+    ∃ s : Scheme, WellFormed s ∧ verts s = n ∧ joinCount s = j ∧
+      span s + 1 = 2 ^ j * (n - 2 * j) := by
+  obtain ⟨s, hwf, hv, hj, hs⟩ := Span.exists_span_eq_join_budget n j h
+  refine ⟨fromSpan s, wf_fromSpan s hwf, ?_, ?_, ?_⟩
+  · simpa [verts_fromSpan] using hv
+  · simpa [joinCount_fromSpan] using hj
+  · simpa [span_fromSpan] using hs
 
 /-- The `(i, j)`-entry of an integer matrix. Named so compared
     statements do not apply a `Matrix` as a function; Palomar's
@@ -252,6 +276,21 @@ theorem dartMass_le {n T : ℕ} (Adj : Fin n → Fin n → Bool) (h : Fin n → 
     dartMass Adj h s ≤ higherCount Adj h s * lowerCount Adj h s * T := by
   simpa [dartMass_eq, higherCount_eq, lowerCount_eq] using
     Span.dartMass_le Adj h hh s
+
+theorem dartWeight_sum_eq_dartMass {n : ℕ}
+    (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (B : Finset (Fin n))
+    {s : Fin n} (hs : s ∉ B) :
+    ∑ t, dartWeight Adj h B s t = dartMass Adj h s := by
+  simpa [dartWeight_eq, dartMass_eq] using
+    Span.dartWeight_sum_eq_dartMass Adj h B hs
+
+theorem dartWeight_interior_sum_le {n T : ℕ}
+    (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (B : Finset (Fin n))
+    (hh : ∀ i, h i ≤ T) {s : Fin n} (hs : s ∉ B) :
+    ∑ t, dartWeight Adj h B s t ≤
+      higherCount Adj h s * lowerCount Adj h s * T := by
+  simpa [dartWeight_eq, higherCount_eq, lowerCount_eq] using
+    Span.dartWeight_interior_sum_le Adj h B hh hs
 
 def boundaryTarget (h : Fin n → ℕ) (T : ℕ) (B : Finset (Fin n)) : Fin n → ℤ :=
   fun s => if s ∈ B then (h s * (T - h s) : ℤ) else 0

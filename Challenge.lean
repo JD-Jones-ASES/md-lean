@@ -13,10 +13,12 @@ This note records consequences of that construction's recurrences
 and dart weights, not of the existence theorem, and not a construction
 of a drawing.
 
-1. The height span of a well-formed scheme on \(n\) vertices is at most
-   the exact one-parameter maximum \(F(n)=2^{n/2}-1\) (\(n\) even) or
-   \(3\cdot 2^{(n-3)/2}-1\) (\(n\) odd). Every such \(F(n)\) is attained.
-   The coarser bound \(T\le 2^{n-2}\) remains as a corollary.
+1. For a well-formed scheme on \(n\) vertices with \(j\) nontrivial
+   joins, \(T+1\le 2^j(n-2j)\). Every admissible pair
+   \((n,j)=(2,0)\) or \(2j+3\le n\) is attained. The one-parameter
+   maximum is \(F(n)=2^{n/2}-1\) (\(n\) even) or
+   \(3\cdot 2^{(n-3)/2}-1\) (\(n\) odd). The coarser bound
+   \(T\le 2^{n-2}\) remains as a corollary.
 2. An integer matrix has \(|\det|\) at most the product of its row
    \(\ell^1\)-norms (Leibniz expansion). If every row \(\ell^1\)-norm is
    at most \(R\), then \(|\det|\le R^n\).
@@ -25,7 +27,10 @@ of a drawing.
    and there are at most \(n-1\) other vertices). Interior Dirichlet rows
    then have \(\ell^1\)-norm at most \(2(n-1)^2T\); boundary rows are unit
    rows. Hence \(|\det M|\le(2(n-1)^2T)^n\) for \(n\ge 2\) and \(T\ge 1\).
-   Locally, the outgoing mass at a vertex is at most \(a_s b_s T\).
+   Locally, the interior outgoing dart-weight sum is at most
+   \(a_s b_s T\). On the boundary the Dirichlet row is a unit row, and
+   the algebraic mass \(a_s N_s+b_s P_s\) need not equal the dart-weight
+   sum (boundary darts have weight one).
 4. Combining the coarser span bound and (3) bounds two candidate scaling
    expressions: \(T^2|\det M|\le 2^{n^2+n-4}(n-1)^{2n}\) and
    \(T^2|\det M|\,T\le 2^{n^2+2n-6}(n-1)^{2n}\). These are size bounds
@@ -111,6 +116,20 @@ theorem span_le_exact (s : Scheme) (h : WellFormed s) :
 /-- Every value \(F(n)\) is attained by some well-formed scheme. -/
 theorem exists_span_eq_exact (n : ℕ) (hn : 2 ≤ n) :
     ∃ s : Scheme, WellFormed s ∧ verts s = n ∧ span s = exactCap n := by
+  sorry
+
+/-- Two-parameter budget: \(T+1\le 2^j(n-2j)\) for every well-formed
+    scheme. -/
+theorem span_succ_le_join_budget (s : Scheme) (h : WellFormed s) :
+    span s + 1 ≤ 2 ^ joinCount s * (verts s - 2 * joinCount s) := by
+  sorry
+
+/-- Attainment at every admissible pair: \((n,j)=(2,0)\) or
+    \(2j+3\le n\). -/
+theorem exists_span_eq_join_budget (n j : ℕ)
+    (h : n = 2 ∧ j = 0 ∨ 2 * j + 3 ≤ n) :
+    ∃ s : Scheme, WellFormed s ∧ verts s = n ∧ joinCount s = j ∧
+      span s + 1 = 2 ^ j * (n - 2 * j) := by
   sorry
 
 /-- The `(i, j)`-entry of an integer matrix. Named so compared
@@ -201,15 +220,32 @@ def higherCount (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n)
 def lowerCount (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) : ℕ :=
   ∑ t : Fin n, if Adj s t then (if h t < h s then 1 else 0) else 0
 
-/-- Outgoing dart mass \(\delta_s=a_s N_s+b_s P_s\). -/
+/-- Algebraic dart mass \(\delta_s=a_s N_s+b_s P_s\). On the interior
+    this equals the sum of outgoing `dartWeight`s; on the boundary it
+    need not. -/
 def dartMass (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (s : Fin n) : ℕ :=
   higherCount Adj h s * downwardSum Adj h s +
     lowerCount Adj h s * upwardSum Adj h s
 
-/-- Local mass bound: \(\delta_s\le a_s b_s T\). -/
+/-- Algebraic mass bound \(\delta_s\le a_s b_s T\), at every vertex. -/
 theorem dartMass_le {n T : ℕ} (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
     (hh : ∀ i, h i ≤ T) (s : Fin n) :
     dartMass Adj h s ≤ higherCount Adj h s * lowerCount Adj h s * T := by
+  sorry
+
+/-- Interior outgoing dart-weight sum equals the algebraic dart mass. -/
+theorem dartWeight_sum_eq_dartMass {n : ℕ}
+    (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (B : Finset (Fin n))
+    {s : Fin n} (hs : s ∉ B) :
+    ∑ t, dartWeight Adj h B s t = dartMass Adj h s := by
+  sorry
+
+/-- Interior outgoing dart-weight sum is at most \(a_s b_s T\). -/
+theorem dartWeight_interior_sum_le {n T : ℕ}
+    (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (B : Finset (Fin n))
+    (hh : ∀ i, h i ≤ T) {s : Fin n} (hs : s ∉ B) :
+    ∑ t, dartWeight Adj h B s t ≤
+      higherCount Adj h s * lowerCount Adj h s * T := by
   sorry
 
 /-- Quadratic boundary values, unscaled by \(T^2\). -/

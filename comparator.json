@@ -3,6 +3,8 @@
   "solution_module": "Solution",
   "theorem_names": [
     "MazurSpan.span_le_two_pow",
+    "MazurSpan.span_succ_le_join_budget",
+    "MazurSpan.exists_span_eq_join_budget",
     "MazurSpan.span_le_exact",
     "MazurSpan.exists_span_eq_exact",
     "MazurSpan.natAbs_det_le_prod_rowSum",
@@ -12,6 +14,8 @@
     "MazurSpan.coord_denom",
     "MazurSpan.coord_grid",
     "MazurSpan.dartMass_le",
+    "MazurSpan.dartWeight_sum_eq_dartMass",
+    "MazurSpan.dartWeight_interior_sum_le",
     "MazurSpan.dirichlet_adjugate_clears"
   ],
   "definition_names": [

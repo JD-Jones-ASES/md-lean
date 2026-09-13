@@ -307,6 +307,11 @@ def additional_checks() -> dict:
     delta, M, _ = check_mazur_case(adj, h, {0, 1, 3})
     X = solve_rational(M, [Fraction(0), Fraction(2, 9), Fraction(0), Fraction(0)])
     require(delta == 5 and X == [0, Fraction(2, 9), Fraction(2, 45), 0], "K4 example")
+    w, up, down, P, N = mazur_weights(adj, h, {0, 1, 3})
+    require(sum(w[0]) == 3, "K4 min-height boundary dart sum is 3")
+    require(len(down[0]) == 0, "K4 min-height vertex has no lower neighbour")
+    require(len(up[0]) * N[0] + len(down[0]) * P[0] == 0,
+            "K4 boundary algebraic mass is 0, unlike the dart-weight sum")
     return {"generic_weighted_forest_checks": forests,
             "rational_system_and_denominator_checks": systems,
             "systems_with_nontrivial_primitive_row_reduction": row_reductions,

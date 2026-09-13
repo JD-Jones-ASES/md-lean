@@ -171,4 +171,68 @@ theorem dartMass_le {T : ℕ} (Adj : Fin n → Fin n → Bool) (h : Fin n → �
     (hpair ▸ hbound).trans_eq hfact
   exact this
 
+/-- On the interior, each higher neighbour carries weight \(N_s\) and each
+    lower neighbour carries weight \(P_s\). Boundary darts are unit, so
+    this identification fails on \(B\). -/
+lemma dartWeight_eq_interior_flags (Adj : Fin n → Fin n → Bool)
+    (h : Fin n → ℕ) (B : Finset (Fin n)) {s : Fin n} (hs : s ∉ B)
+    (t : Fin n) :
+    dartWeight Adj h B s t =
+      (if Adj s t then (if h s < h t then downwardSum Adj h s else 0) else 0) +
+        (if Adj s t then (if h t < h s then upwardSum Adj h s else 0) else 0) := by
+  by_cases hst : s = t
+  · simp [dartWeight, hst]
+  · unfold dartWeight
+    simp [hst, hs]
+    cases hAdj : Adj s t
+    · simp
+    · simp
+      split_ifs with hlt hgt
+      · exact (lt_asymm hlt hgt).elim
+      · simp
+      · simp
+      · simp
+
+lemma sum_higher_weight (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
+    (s : Fin n) (N : ℕ) :
+    (∑ t, if Adj s t then (if h s < h t then N else 0) else 0) =
+      higherCount Adj h s * N := by
+  rw [higherCount, sum_mul]
+  apply sum_congr rfl
+  intro t _
+  split_ifs <;> simp
+
+lemma sum_lower_weight (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
+    (s : Fin n) (P : ℕ) :
+    (∑ t, if Adj s t then (if h t < h s then P else 0) else 0) =
+      lowerCount Adj h s * P := by
+  rw [lowerCount, sum_mul]
+  apply sum_congr rfl
+  intro t _
+  split_ifs <;> simp
+
+/-- Interior outgoing dart-weight sum equals the algebraic dart mass. -/
+theorem dartWeight_sum_eq_dartMass (Adj : Fin n → Fin n → Bool)
+    (h : Fin n → ℕ) (B : Finset (Fin n)) {s : Fin n} (hs : s ∉ B) :
+    ∑ t, dartWeight Adj h B s t = dartMass Adj h s := by
+  have hterm := dartWeight_eq_interior_flags Adj h B hs
+  have hsum :
+      ∑ t, dartWeight Adj h B s t =
+        (∑ t, if Adj s t then (if h s < h t then downwardSum Adj h s else 0)
+          else 0) +
+          ∑ t, if Adj s t then (if h t < h s then upwardSum Adj h s else 0)
+            else 0 := by
+    simp [hterm, sum_add_distrib]
+  rw [hsum, sum_higher_weight, sum_lower_weight, dartMass, Nat.mul_comm,
+    Nat.add_comm, Nat.mul_comm (lowerCount Adj h s)]
+
+/-- Interior outgoing dart-weight sum is at most \(a_s b_s T\). -/
+theorem dartWeight_interior_sum_le {T : ℕ} (Adj : Fin n → Fin n → Bool)
+    (h : Fin n → ℕ) (B : Finset (Fin n)) (hh : ∀ i, h i ≤ T)
+    {s : Fin n} (hs : s ∉ B) :
+    ∑ t, dartWeight Adj h B s t ≤
+      higherCount Adj h s * lowerCount Adj h s * T := by
+  rw [dartWeight_sum_eq_dartMass Adj h B hs]
+  exact dartMass_le Adj h hh s
+
 end Span

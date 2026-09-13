@@ -13,18 +13,20 @@ project:
     weighted Dirichlet matrix for the horizontal coordinate; the paper does
     not bound the height span or the bit length of the coordinates. For a
     well-formed scheme on n >= 2 vertices with j nontrivial joins,
-    T+1 <= 2^j (n-2j), attained at every admissible pair, so the
+    T+1 <= 2^j (n-2j), attained at every admissible pair (n,j)=(2,0) or
+    2j+3 <= n. The
     one-parameter maximum is F(n) = 2^{n/2}-1 (n even) or
     3 * 2^{(n-3)/2}-1 (n odd). The coarser bound T <= 2^{n-2} remains. An
     integer matrix has |det| at most the product of its row ell_1-norms.
     Heights in {0,...,T} force Mazur's interior dart weights to be at most
     (n-1)T, so every Dirichlet row has ell_1-norm at most 2(n-1)^2 T when
-    T >= 1, and |det M| <= (2(n-1)^2 T)^n; locally the outgoing mass is at
-    most a_s b_s T. Combining the coarser span bound with the row-sum bound
-    sizes T^2 |det M| and T^2 |det M| T. Independently of invertibility,
-    z = adj(M) u satisfies Mz = Delta u and z_s = Delta h_s (T-h_s) on the
-    boundary. Polynomial-area Euclidean planar greedy drawings of all
-    3-connected planar graphs remain open (Da Lozzo–D'Angelo–Frati, GD 2020).
+    T >= 1, and |det M| <= (2(n-1)^2 T)^n; locally the interior outgoing
+    dart-weight sum is at most a_s b_s T. Combining the coarser span bound
+    with the row-sum bound sizes T^2 |det M| and T^2 |det M| T.
+    Independently of invertibility, z = adj(M) u satisfies Mz = Delta u and
+    z_s = Delta h_s (T-h_s) on the boundary. Polynomial-area Euclidean
+    planar greedy drawings of all 3-connected planar graphs remain open
+    (Da Lozzo–D'Angelo–Frati, COCOON 2020).
   authors: ["JD Jones"]
   responsible_maintainers: ["JD Jones"]
   license: "MIT"
@@ -103,25 +105,29 @@ sources:
     note: >-
       SODA 2011. Schnyder drawings of triangulations are greedy for a metric
       equivalent to Euclidean distance and use O(log n)-bit integer
-      coordinates; Euclidean convex greediness together with succinct
-      coordinates fails in general. Background for the bit-complexity
-      comparison; the compared theorems do not produce a Schnyder drawing.
+      coordinates. He and Zhang also repeated the then-claimed
+      exponential-area obstruction of Cao, Strelzoff, and Sun. Da Lozzo,
+      D'Angelo, and Frati later refuted that obstruction for the cited
+      family by constructing convex angle-monotone drawings on
+      linear-by-linear grids. Background for the bit-complexity comparison;
+      the compared theorems do not produce a Schnyder drawing.
   - title: "On the area requirements of planar greedy drawings of triconnected planar graphs"
     authors: ["Giordano Da Lozzo", "Anthony D'Angelo", "Fabrizio Frati"]
-    id: "arXiv:2003.00556"
+    id: "doi:10.1007/978-3-030-58150-3_35"
     type: "paper"
-    location: "https://arxiv.org/abs/2003.00556"
+    location: "https://doi.org/10.1007/978-3-030-58150-3_35"
     relationship: "background"
     author_endorsement: "not-contacted"
     note: >-
-      GD 2020; arXiv:2003.00556. Polynomial-size grids for planar Euclidean
-      greedy drawings of all 3-connected planar graphs are open. Cao,
-      Strelzoff, and Sun's exponential-area claim for a specific family is
-      refuted there: those graphs have convex greedy drawings on an
-      O(n) x O(n) grid; Halin graphs likewise. Some alpha-Schnyder drawings
-      require exponential area. This is the comparison class for Mazur's
-      Euclidean convex construction; the compared theorems bound recurrences
-      and |det M|, not drawing area.
+      COCOON 2020; Computing and Combinatorics, LNCS 12273, 435-447;
+      arXiv:2003.00556. Polynomial-size grids for planar Euclidean greedy
+      drawings of all 3-connected planar graphs are open. Cao, Strelzoff,
+      and Sun's exponential-area claim for a specific family is refuted
+      there: those graphs have convex greedy drawings on an O(n) x O(n)
+      grid; Halin graphs likewise. Some alpha-Schnyder drawings require
+      exponential area. This is the comparison class for Mazur's Euclidean
+      convex construction; the compared theorems bound recurrences and
+      |det M|, not drawing area.
 
 related_formalizations:
   - id: "https://proofatlas.ai/formalizations/strong-papadimitriou-ratajczak-conjecture/"
@@ -134,16 +140,20 @@ related_formalizations:
 
 status:
   scope: >-
-    Eleven compared theorems over the compared definitions, plus the inductive
-    type Scheme. span_le_exact and exists_span_eq_exact are the exact
-    one-parameter scheme maximum F(n). span_le_two_pow is the coarser
+    Fifteen compared theorems over the compared definitions, plus the inductive
+    type Scheme. span_succ_le_join_budget and exists_span_eq_join_budget are
+    the two-parameter budget T+1 <= 2^j (n-2j), attained at every admissible
+    pair (n,j)=(2,0) or 2j+3 <= n. span_le_exact and exists_span_eq_exact are
+    the exact one-parameter scheme maximum F(n). span_le_two_pow is the coarser
     height-span bound. natAbs_det_le_prod_rowSum and natAbs_det_le_of_rowSum_le
     are the elementary Leibniz ell_1 determinant bounds. dirichlet_rowSum_le
     and dirichlet_det_le are the dart-weight row-sum and determinant bounds.
-    dartMass_le is the local a_s b_s T mass bound. coord_denom and coord_grid
-    bound the products T^2 |det M| and T^2 |det M| T against T <= 2^{n-2}.
-    dirichlet_adjugate_clears is the adjugate identity Mz = Delta u with
-    integer boundary values Delta h (T-h); it does not prove invertibility.
+    dartMass_le is the algebraic a_s b_s T mass bound; dartWeight_sum_eq_dartMass
+    identifies it with the interior outgoing dart-weight sum;
+    dartWeight_interior_sum_le is the resulting interior bound. coord_denom and
+    coord_grid bound the products T^2 |det M| and T^2 |det M| T against
+    T <= 2^{n-2}. dirichlet_adjugate_clears is the adjugate identity Mz = Delta u
+    with integer boundary values Delta h (T-h); it does not prove invertibility.
     Not claimed: SPRC; polynomial grid area; that every greedy labeling (as
     opposed to Mazur's recurrences) obeys the span bound; a planar
     degree-budget theorem. Challenge.lean's intentional sorry placeholders
@@ -153,6 +163,16 @@ status:
   sorry_in_definitions: 0
   axioms: ["propext", "Classical.choice", "Quot.sound"]
   main_results:
+    - declaration: "MazurSpan.span_succ_le_join_budget"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "MazurSpan.exists_span_eq_join_budget"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
     - declaration: "MazurSpan.span_le_exact"
       file: "Solution.lean"
       sorry_count: 0
@@ -174,6 +194,11 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator.json"
     - declaration: "MazurSpan.dartMass_le"
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator.json"
+    - declaration: "MazurSpan.dartWeight_interior_sum_le"
       file: "Solution.lean"
       sorry_count: 0
       axioms: ["propext", "Classical.choice", "Quot.sound"]
@@ -236,6 +261,20 @@ review:
 alignment:
   namespace: "MazurSpan"
   statements:
+    - source: "Mazur, ProofAtlas public version 2026-09-09, §2 recurrences; two-parameter budget not stated in the source"
+      lean: "MazurSpan.span_succ_le_join_budget"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        Well-formed scheme implies span s + 1 <= 2^(joinCount s) * (verts s - 2
+        * joinCount s). Join uses c = 1.
+    - source: "Construction of extremal schemes from a cycle and triangle joins; not in Mazur"
+      lean: "MazurSpan.exists_span_eq_join_budget"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        Admissible pairs are (n,j)=(2,0) or 2j+3 <= n. Some well-formed scheme
+        attains T+1 = 2^j (n-2j).
     - source: "Mazur, ProofAtlas public version 2026-09-09, §2 recurrences; exact maximum not stated in the source"
       lean: "MazurSpan.span_le_exact"
       module: "Solution"
@@ -297,7 +336,19 @@ alignment:
       lean: "MazurSpan.dartMass_le"
       module: "Solution"
       status: "proved"
-      note: "Outgoing mass delta_s <= a_s b_s T."
+      note: "Algebraic mass delta_s = a_s N_s + b_s P_s is at most a_s b_s T, at every vertex."
+    - source: "Interior dart-weight sum; not stated in Mazur"
+      lean: "MazurSpan.dartWeight_sum_eq_dartMass"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        For s not in B, the sum of dartWeight(s,t) equals dartMass s. False
+        on the boundary, where darts have weight one.
+    - source: "Interior dart-weight bound; not stated in Mazur"
+      lean: "MazurSpan.dartWeight_interior_sum_le"
+      module: "Solution"
+      status: "proved"
+      note: "For s not in B, the outgoing dart-weight sum is at most a_s b_s T."
     - source: "Adjugate identity applied to Mazur's Dirichlet matrix; not stated in Mazur"
       lean: "MazurSpan.dirichlet_adjugate_clears"
       module: "Solution"

@@ -29,10 +29,11 @@ Let \(n\ge 2\) be the number of vertices of a well-formed Mazur scheme
 height \(c=1\)).
 
 1. **Exact span.** With \(j\) nontrivial joins,
-   \(T+1\le 2^j(n-2j)\), and every admissible pair is attained. The
-   one-parameter maximum is
-   \(F(n)=2^{n/2}-1\) (\(n\) even) or \(3\cdot 2^{(n-3)/2}-1\) (\(n\)
-   odd). The coarser bound \(T\le 2^{n-2}\) remains.
+   \(T+1\le 2^j(n-2j)\). Every admissible pair
+   \((n,j)=(2,0)\) or \(2j+3\le n\) is attained. The one-parameter
+   maximum is \(F(n)=2^{n/2}-1\) (\(n\) even) or
+   \(3\cdot 2^{(n-3)/2}-1\) (\(n\) odd). The coarser bound
+   \(T\le 2^{n-2}\) remains.
 2. **Leibniz.** An integer matrix has \(|\det|\) at most the product of
    its row \(\ell^1\)-norms. If every row \(\ell^1\)-norm is at most
    \(R\), then \(|\det|\le R^n\).
@@ -40,7 +41,9 @@ height \(c=1\)).
    sums at most \((n-1)T\). Interior Dirichlet rows then have
    \(\ell^1\)-norm at most \(2(n-1)^2T\); boundary rows are unit rows.
    Hence \(|\det M|\le(2(n-1)^2T)^n\) when \(T\ge 1\). Locally the
-   outgoing mass is at most \(a_s b_s T\).
+   interior outgoing dart-weight sum is at most \(a_s b_s T\). On the
+   boundary the Dirichlet row is a unit row, and the algebraic mass
+   \(a_s N_s+b_s P_s\) need not equal the dart-weight sum.
 4. **Scaling expressions.** Against the coarser span bound and (3),
    \(T^2|\det M|\le 2^{n^2+n-4}(n-1)^{2n}\) and
    \(T^2|\det M|\,T\le 2^{n^2+2n-6}(n-1)^{2n}\). These are bounds on
@@ -55,10 +58,12 @@ The factor \(n-1\) is the count of other vertices: the self-term
 vanishes. \(F(n)\) grows like \((\sqrt 2)^n\), not \(2^n\). Join of two
 3-cycles attains \(F(5)=5\).
 
-Lean names: `MazurSpan.span_le_exact`, `exists_span_eq_exact`,
+Lean names: `MazurSpan.span_succ_le_join_budget`,
+`exists_span_eq_join_budget`, `span_le_exact`, `exists_span_eq_exact`,
 `span_le_two_pow`, `natAbs_det_le_prod_rowSum`,
 `natAbs_det_le_of_rowSum_le`, `dirichlet_rowSum_le`,
-`dirichlet_det_le`, `dartMass_le`, `coord_denom`, `coord_grid`,
+`dirichlet_det_le`, `dartMass_le`, `dartWeight_sum_eq_dartMass`,
+`dartWeight_interior_sum_le`, `coord_denom`, `coord_grid`,
 `dirichlet_adjugate_clears`.
 
 ## What is not claimed
@@ -95,19 +100,22 @@ He and Zhang (SODA 2011) showed that Schnyder drawings of triangulations
 are greedy for a metric equivalent to Euclidean distance and use two
 integer coordinates in \(\{0,\ldots,2n-5\}\) — polynomial grid, \(O(\log n)\)
 bits — but that metric is not the Euclidean metric of the strong
-conjecture. They also record that requiring Euclidean convex greediness
-together with succinct coordinates fails in general.
+conjecture. He and Zhang also repeated the then-claimed exponential-area
+obstruction of Cao, Strelzoff, and Sun. Da Lozzo, D'Angelo, and Frati
+later refuted that obstruction for the cited family by constructing
+convex angle-monotone drawings on linear-by-linear grids.
 
 Whether every 3-connected planar graph has a *planar* Euclidean greedy
 drawing on a polynomial-size grid is open. Cao, Strelzoff, and Sun
 claimed a negative answer for a family of subdivisions, with
 \(2^{\Omega(n)}\) area and hence \(\Omega(n)\)-bit coordinates. Da Lozzo,
-D'Angelo, and Frati (GD 2020, arXiv:2003.00556) showed that every
-\(n\)-vertex graph in that family actually has a convex angle-monotone
-(hence greedy) drawing on an \(O(n)\times O(n)\) grid, reopening the
-polynomial-grid question, and proved the same grid bound for Halin
-graphs. They also showed that some \(\alpha\)-Schnyder drawings with
-fixed \(\alpha<60^\circ\) require exponential area.
+D'Angelo, and Frati (COCOON 2020; Computing and Combinatorics, LNCS
+12273, 435–447, doi:10.1007/978-3-030-58150-3_35; arXiv:2003.00556)
+showed that every \(n\)-vertex graph in that family actually has a convex
+angle-monotone (hence greedy) drawing on an \(O(n)\times O(n)\) grid,
+reopening the polynomial-grid question, and proved the same grid bound
+for Halin graphs. They also showed that some \(\alpha\)-Schnyder drawings
+with fixed \(\alpha<60^\circ\) require exponential area.
 
 Mazur's construction is Euclidean and convex, so it sits in the class
 for which a polynomial grid is still open. The bounds here, if they
@@ -153,7 +161,7 @@ python3 scripts/verify.py
 python3 -O scripts/verify.py
 ```
 
-`lake build` is expected to print eleven `declaration uses sorry`
+`lake build` is expected to print fifteen `declaration uses sorry`
 warnings from Challenge and nothing else. `scripts/verify.py` must
 print `VERIFY GREEN` under both runners.
 
