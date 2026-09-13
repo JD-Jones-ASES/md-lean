@@ -172,7 +172,9 @@ alignment:
       lean: "MazurSpan.natAbs_det_le_prod_rowSum"
       module: "Solution"
       status: "proved"
-      note: "|det A| <= product of row ell_1-norms for A : Matrix (Fin n) (Fin n) ℤ."
+      note: >-
+        |det A| <= product of row ell_1-norms. Entries are written as
+        entry A i j so the compared type does not apply a Matrix as a function.
     - source: "Corollary of the previous"
       lean: "MazurSpan.natAbs_det_le_of_rowSum_le"
       module: "Solution"

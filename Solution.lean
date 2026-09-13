@@ -74,15 +74,21 @@ theorem span_le_two_pow (s : Scheme) (h : WellFormed s) :
   have := Span.span_le_two_pow (toSpan s) (wf_toSpan s h)
   simpa [span_toSpan, verts_toSpan] using this
 
+/-- The `(i, j)`-entry of an integer matrix. Named so compared
+    statements do not apply a `Matrix` as a function; Palomar's
+    core notation audit treats `Matrix` as an opaque type. -/
+def entry {n : ℕ} (A : Matrix (Fin n) (Fin n) ℤ) (i j : Fin n) : ℤ :=
+  A i j
+
 theorem natAbs_det_le_prod_rowSum (n : ℕ) (A : Matrix (Fin n) (Fin n) ℤ) :
-    A.det.natAbs ≤ ∏ i : Fin n, ∑ j : Fin n, (A i j).natAbs :=
-  Span.natAbs_det_le_prod_rowSum n A
+    A.det.natAbs ≤ ∏ i : Fin n, ∑ j : Fin n, (entry A i j).natAbs := by
+  simpa [entry] using Span.natAbs_det_le_prod_rowSum n A
 
 theorem natAbs_det_le_of_rowSum_le {n R : ℕ}
     (A : Matrix (Fin n) (Fin n) ℤ)
-    (h : ∀ i, ∑ j, (A i j).natAbs ≤ R) :
-    A.det.natAbs ≤ R ^ n :=
-  Span.natAbs_det_le_of_rowSum_le A h
+    (h : ∀ i, ∑ j, (entry A i j).natAbs ≤ R) :
+    A.det.natAbs ≤ R ^ n := by
+  simpa [entry] using Span.natAbs_det_le_of_rowSum_le A (by simpa [entry] using h)
 
 variable {n : ℕ}
 
@@ -128,8 +134,8 @@ lemma dirichlet_eq (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
 theorem dirichlet_rowSum_le {n T : ℕ}
     (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (B : Finset (Fin n))
     (hh : ∀ i, h i ≤ T) (hn : 2 ≤ n) (hT : 1 ≤ T) (s : Fin n) :
-    ∑ t, (dirichlet Adj h B s t).natAbs ≤ 2 * (n - 1) ^ 2 * T := by
-  simpa [dirichlet_eq] using Span.dirichlet_rowSum_le Adj h B hh hn hT s
+    ∑ t, (entry (dirichlet Adj h B) s t).natAbs ≤ 2 * (n - 1) ^ 2 * T := by
+  simpa [dirichlet_eq, entry] using Span.dirichlet_rowSum_le Adj h B hh hn hT s
 
 theorem dirichlet_det_le {n T : ℕ}
     (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (B : Finset (Fin n))

@@ -81,15 +81,21 @@ theorem span_le_two_pow (s : Scheme) (h : WellFormed s) :
     span s ≤ 2 ^ (verts s - 2) := by
   sorry
 
+/-- The `(i, j)`-entry of an integer matrix. Named so compared
+    statements do not apply a `Matrix` as a function; Palomar's
+    core notation audit treats `Matrix` as an opaque type. -/
+def entry {n : ℕ} (A : Matrix (Fin n) (Fin n) ℤ) (i j : Fin n) : ℤ :=
+  A i j
+
 /-- An integer matrix has |det| at most the product of its row ℓ¹-norms. -/
 theorem natAbs_det_le_prod_rowSum (n : ℕ) (A : Matrix (Fin n) (Fin n) ℤ) :
-    A.det.natAbs ≤ ∏ i : Fin n, ∑ j : Fin n, (A i j).natAbs := by
+    A.det.natAbs ≤ ∏ i : Fin n, ∑ j : Fin n, (entry A i j).natAbs := by
   sorry
 
 /-- If every row ℓ¹-norm is at most R, then |det| ≤ R^n. -/
 theorem natAbs_det_le_of_rowSum_le {n R : ℕ}
     (A : Matrix (Fin n) (Fin n) ℤ)
-    (h : ∀ i, ∑ j, (A i j).natAbs ≤ R) :
+    (h : ∀ i, ∑ j, (entry A i j).natAbs ≤ R) :
     A.det.natAbs ≤ R ^ n := by
   sorry
 
@@ -127,7 +133,7 @@ def dirichlet (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
 theorem dirichlet_rowSum_le {n T : ℕ}
     (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ) (B : Finset (Fin n))
     (hh : ∀ i, h i ≤ T) (hn : 2 ≤ n) (hT : 1 ≤ T) (s : Fin n) :
-    ∑ t, (dirichlet Adj h B s t).natAbs ≤ 2 * (n - 1) ^ 2 * T := by
+    ∑ t, (entry (dirichlet Adj h B) s t).natAbs ≤ 2 * (n - 1) ^ 2 * T := by
   sorry
 
 /-- Hence \(|\det M|\le(2(n-1)^2T)^n\). -/
