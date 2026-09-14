@@ -48,9 +48,21 @@ theorem coord_grid_of_scheme (sch : Scheme) (hwf : WellFormed sch)
     (span_le_two_pow sch hwf) hh
 
 /-- Quadratic boundary values for Mazur's Dirichlet problem, unscaled by
-    \(T^2\). Interior coordinates are zero on the right-hand side. -/
+    \(T^2\). Interior coordinates are zero on the right-hand side.
+    Under `h i ≤ T` this is the ordinary integer product
+    `h i * (T - h i)`, not truncated natural subtraction. -/
 def boundaryTarget (h : Fin n → ℕ) (T : ℕ) (B : Finset (Fin n)) : Fin n → ℤ :=
-  fun s => if s ∈ B then (h s * (T - h s) : ℤ) else 0
+  fun s => if s ∈ B then (h s : ℤ) * ((T : ℤ) - (h s : ℤ)) else 0
+
+lemma boundaryTarget_of_mem {h : Fin n → ℕ} {T : ℕ} {B : Finset (Fin n)}
+    {s : Fin n} (hs : s ∈ B) :
+    boundaryTarget h T B s = (h s : ℤ) * ((T : ℤ) - (h s : ℤ)) := by
+  simp [boundaryTarget, hs]
+
+lemma boundaryTarget_of_le {h : Fin n → ℕ} {T : ℕ} {B : Finset (Fin n)}
+    (hh : ∀ i, h i ≤ T) {s : Fin n} (hs : s ∈ B) :
+    boundaryTarget h T B s = (h s * (T - h s) : ℤ) := by
+  rw [boundaryTarget_of_mem hs, ← Nat.cast_sub (hh s), ← Nat.cast_mul]
 
 lemma dirichlet_mulVec_adjugate (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
     (B : Finset (Fin n)) (u : Fin n → ℤ) :
@@ -70,23 +82,30 @@ lemma dirichlet_mulVec_of_mem_boundary (Adj : Fin n → Fin n → Bool)
   simp [mulVec, dotProduct, dirichlet, hs]
 
 /-- The adjugate supplies an integer vector \(z\) with \(Mz=\Delta u\). On
-    the boundary this is \(z_s=\Delta h_s(T-h_s)\). Invertibility of \(M\)
-    is not claimed; if \(\Delta=0\) the identity is \(0=0\). -/
+    the boundary this is \(z_s=\Delta h_s(T-h_s)\) as an ordinary integer
+    product, using the height bound so the factor is never truncated.
+    Invertibility of \(M\) is not claimed; if \(\Delta=0\) the identity
+    is \(0=0\). -/
 theorem dirichlet_adjugate_clears (Adj : Fin n → Fin n → Bool)
-    (h : Fin n → ℕ) (B : Finset (Fin n)) (T : ℕ) :
+    (h : Fin n → ℕ) (B : Finset (Fin n)) (T : ℕ)
+    (hh : ∀ i, h i ≤ T) :
     let M := dirichlet Adj h B
     let u := boundaryTarget h T B
     let z := M.adjugate *ᵥ u
     M *ᵥ z = M.det • u ∧
-      ∀ s ∈ B, z s = M.det * (h s * (T - h s) : ℤ) := by
+      ∀ s ∈ B, z s = M.det * ((h s : ℤ) * ((T : ℤ) - (h s : ℤ))) := by
   intro M u z
   refine ⟨dirichlet_mulVec_adjugate Adj h B u, ?_⟩
   intro s hs
   have hrow := dirichlet_mulVec_of_mem_boundary Adj h B hs z
   have hmul : (M *ᵥ z) s = (M.det • u) s := by
     rw [dirichlet_mulVec_adjugate]
-  have : z s = (M.det • u) s := by
+  have hz : z s = (M.det • u) s := by
     rw [← hrow, hmul]
-  simpa [u, boundaryTarget, hs, Pi.smul_apply, smul_eq_mul] using this
+  have hInt := boundaryTarget_of_mem (h := h) (T := T) (B := B) hs
+  have hNat := boundaryTarget_of_le (h := h) (T := T) (B := B) hh hs
+  have hquad : (h s * (T - h s) : ℤ) =
+      (h s : ℤ) * ((T : ℤ) - (h s : ℤ)) := hNat.symm.trans hInt
+  simpa [u, hInt, hquad, Pi.smul_apply, smul_eq_mul] using hz
 
 end Span

@@ -23,8 +23,9 @@ project:
     T >= 1, and |det M| <= (2(n-1)^2 T)^n; locally the interior outgoing
     dart-weight sum is at most a_s b_s T. Combining the coarser span bound
     with the row-sum bound sizes T^2 |det M| and T^2 |det M| T.
-    Independently of invertibility, z = adj(M) u satisfies Mz = Delta u and
-    z_s = Delta h_s (T-h_s) on the boundary. Polynomial-area Euclidean
+    Independently of invertibility, under the height bound h i <= T,
+    z = adj(M) u satisfies Mz = Delta u and z_s = Delta h_s (T-h_s) on
+    the boundary as ordinary integer subtraction. Polynomial-area Euclidean
     planar greedy drawings of all 3-connected planar graphs remain open
     (Da Lozzo–D'Angelo–Frati, COCOON 2020).
   authors: ["JD Jones"]
@@ -153,7 +154,8 @@ status:
     dartWeight_interior_sum_le is the resulting interior bound. coord_denom and
     coord_grid bound the products T^2 |det M| and T^2 |det M| T against
     T <= 2^{n-2}. dirichlet_adjugate_clears is the adjugate identity Mz = Delta u
-    with integer boundary values Delta h (T-h); it does not prove invertibility.
+    with integer boundary values Delta * h * (T-h) as ordinary integer
+    subtraction under h i <= T; it does not prove invertibility.
     Not claimed: SPRC; polynomial grid area; that every greedy labeling (as
     opposed to Mazur's recurrences) obeys the span bound; a planar
     degree-budget theorem. Challenge.lean's intentional sorry placeholders
@@ -354,8 +356,10 @@ alignment:
       module: "Solution"
       status: "proved"
       note: >-
-        M (adj M u) = Delta u, and on the boundary z_s = Delta h_s (T-h_s).
-        Does not prove Delta != 0.
+        Under the hypothesis h i <= T, M (adj M u) = Delta u, and on the
+        boundary z_s = Delta * h_s * (T - h_s) as ordinary integer
+        subtraction, not truncated natural subtraction. Does not prove
+        Delta != 0.
 
 acknowledgements: >-
   Lech Mazur for the construction; Christos Papadimitriou and David Ratajczak

@@ -293,24 +293,23 @@ theorem dartWeight_interior_sum_le {n T : ℕ}
     Span.dartWeight_interior_sum_le Adj h B hh hs
 
 def boundaryTarget (h : Fin n → ℕ) (T : ℕ) (B : Finset (Fin n)) : Fin n → ℤ :=
-  fun s => if s ∈ B then (h s * (T - h s) : ℤ) else 0
+  fun s => if s ∈ B then (h s : ℤ) * ((T : ℤ) - (h s : ℤ)) else 0
 
 lemma boundaryTarget_eq (h : Fin n → ℕ) (T : ℕ) (B : Finset (Fin n)) :
     boundaryTarget h T B = Span.boundaryTarget h T B := rfl
 
 theorem dirichlet_adjugate_clears {n : ℕ}
     (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
-    (B : Finset (Fin n)) (T : ℕ) :
+    (B : Finset (Fin n)) (T : ℕ) (hh : ∀ i, h i ≤ T) :
     let M := dirichlet Adj h B
     let u := boundaryTarget h T B
     let z := M.adjugate.mulVec u
     M.mulVec z = M.det • u ∧
-      ∀ s ∈ B, z s = M.det * (h s * (T - h s) : ℤ) := by
+      ∀ s ∈ B, z s = M.det * ((h s : ℤ) * ((T : ℤ) - (h s : ℤ))) := by
   intro M u z
   have hM : M = Span.dirichlet Adj h B := dirichlet_eq Adj h B
   have hu : u = Span.boundaryTarget h T B := boundaryTarget_eq h T B
-  have := Span.dirichlet_adjugate_clears Adj h B T
-  -- Unfold the let's in the Span theorem.
+  have := Span.dirichlet_adjugate_clears Adj h B T hh
   simpa [M, u, z, hM, hu, dirichlet_eq] using this
 
 end MazurSpan

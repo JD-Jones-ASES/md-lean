@@ -48,11 +48,12 @@ height \(c=1\)).
    \(T^2|\det M|\le 2^{n^2+n-4}(n-1)^{2n}\) and
    \(T^2|\det M|\,T\le 2^{n^2+2n-6}(n-1)^{2n}\). These are bounds on
    those two products.
-5. **Adjugate.** Independently of invertibility,
-   \(z=\operatorname{adj}(M)u\) satisfies \(Mz=\Delta u\) and
-   \(z_s=\Delta h_s(T-h_s)\) on the boundary. If \(\Delta\neq 0\), this
-   clears Mazur's quadratic boundary values in the integers; the Lean
-   does not prove \(\Delta\neq 0\).
+5. **Adjugate.** Independently of invertibility, and assuming
+   \(0\le h_s\le T\), \(z=\operatorname{adj}(M)u\) satisfies
+   \(Mz=\Delta u\) and \(z_s=\Delta h_s(T-h_s)\) on the boundary as an
+   ordinary integer product, not truncated natural subtraction. If
+   \(\Delta\neq 0\), this clears Mazur's quadratic boundary values in
+   the integers; the Lean does not prove \(\Delta\neq 0\).
 
 The factor \(n-1\) is the count of other vertices: the self-term
 vanishes. \(F(n)\) grows like \((\sqrt 2)^n\), not \(2^n\). Join of two

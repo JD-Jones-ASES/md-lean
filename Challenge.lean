@@ -35,10 +35,12 @@ of a drawing.
    expressions: \(T^2|\det M|\le 2^{n^2+n-4}(n-1)^{2n}\) and
    \(T^2|\det M|\,T\le 2^{n^2+2n-6}(n-1)^{2n}\). These are size bounds
    on those expressions.
-5. Independently of invertibility, the adjugate identity produces an
-   integer vector \(z=\operatorname{adj}(M)u\) with \(Mz=\Delta u\) and
-   \(z_s=\Delta h_s(T-h_s)\) on the boundary. If \(\Delta\neq 0\), this
-   is an integer clearing of Mazur's quadratic boundary values; the
+5. Independently of invertibility, and assuming heights lie in
+   \(\{0,\ldots,T\}\), the adjugate identity produces an integer vector
+   \(z=\operatorname{adj}(M)u\) with \(Mz=\Delta u\) and
+   \(z_s=\Delta h_s(T-h_s)\) on the boundary as an ordinary integer
+   product (not truncated natural subtraction). If \(\Delta\neq 0\),
+   this is an integer clearing of Mazur's quadratic boundary values; the
    compared statement does not prove \(\Delta\neq 0\).
 
 The factor \(n-1\) is the graph-theoretic count of other vertices, not a
@@ -248,20 +250,23 @@ theorem dartWeight_interior_sum_le {n T : ℕ}
       higherCount Adj h s * lowerCount Adj h s * T := by
   sorry
 
-/-- Quadratic boundary values, unscaled by \(T^2\). -/
+/-- Quadratic boundary values, unscaled by \(T^2\). The product uses
+    integer subtraction, so it is the ordinary \(h_s(T-h_s)\) rather
+    than truncated natural subtraction. -/
 def boundaryTarget (h : Fin n → ℕ) (T : ℕ) (B : Finset (Fin n)) : Fin n → ℤ :=
-  fun s => if s ∈ B then (h s * (T - h s) : ℤ) else 0
+  fun s => if s ∈ B then (h s : ℤ) * ((T : ℤ) - (h s : ℤ)) else 0
 
-/-- Adjugate identity: \(Mz=\Delta u\) and \(z_s=\Delta h_s(T-h_s)\) on
-    the boundary. Does not prove invertibility. -/
+/-- Adjugate identity under the height bound \(h_i\le T\): \(Mz=\Delta u\)
+    and \(z_s=\Delta h_s(T-h_s)\) on the boundary as an ordinary integer
+    product. Does not prove invertibility. -/
 theorem dirichlet_adjugate_clears {n : ℕ}
     (Adj : Fin n → Fin n → Bool) (h : Fin n → ℕ)
-    (B : Finset (Fin n)) (T : ℕ) :
+    (B : Finset (Fin n)) (T : ℕ) (hh : ∀ i, h i ≤ T) :
     let M := dirichlet Adj h B
     let u := boundaryTarget h T B
     let z := M.adjugate.mulVec u
     M.mulVec z = M.det • u ∧
-      ∀ s ∈ B, z s = M.det * (h s * (T - h s) : ℤ) := by
+      ∀ s ∈ B, z s = M.det * ((h s : ℤ) * ((T : ℤ) - (h s : ℤ))) := by
   sorry
 
 end MazurSpan
